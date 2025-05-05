@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Aktion {
 
     public static void angreifen(SpielCharakter angreifer, SpielCharakter verteidiger) {
@@ -29,7 +31,7 @@ public class Aktion {
         }
     }
 
-    public static void gegenstandBenutzen(SpielCharakter benutzer, int slotIndex) {
+    public static void gegenstandBenutzen(SpielCharakter benutzer, int slotIndex, SpielCharakter gegner) {
         String[] inventar = benutzer.getInventar();
 
         if (slotIndex < 0 || slotIndex >= inventar.length) {
@@ -48,17 +50,13 @@ public class Aktion {
                 break;
 
             case "bombe":
-                benutzer.setAusdauer(Math.max(0, benutzer.getAusdauer() - 10));
+                benutzer.setAusdauer(Math.max(0, benutzer.getAusdauer() - 10)); // Bombe kostet Ausdauer
+                if (gegner != null) {  // Falls Gegner angegeben wurde
+                    gegner.setHealth(gegner.getHealth() - 20);  // Schaden am Gegner
+                }
                 inventar[slotIndex] = "Leer";
                 benutzer.setInventar(inventar);
-                System.out.println(benutzer.getName() + " wirft eine Bombe! (Aber ohne Ziel – Effekte kannst du selbst erweitern)");
-                break;
-
-            case "schild":
-                benutzer.setBlocking(true);
-                inventar[slotIndex] = "Leer";
-                benutzer.setInventar(inventar);
-                System.out.println(benutzer.getName() + " aktiviert ein Schild! Der nächste Angriff wird halbiert.");
+                System.out.println(benutzer.getName() + " wirft eine Bombe!");
                 break;
 
             case "leer":
@@ -79,23 +77,40 @@ public class Aktion {
     }
 
     public static void gegnerZug(SpielCharakter gegner, SpielCharakter spieler) {
-        if (gegner.getHealth() <= 100 && hatItem(gegner, "trank")) {
+        Random random = new Random();
+
+        // 50% Chance auf Heilung bei HP <= 100 (statt 75%)
+        if (gegner.getHealth() <= 100 && hatItem(gegner, "trank") && random.nextInt(100) < 50) {
             int slot = findeItemSlot(gegner, "trank");
-            gegenstandBenutzen(gegner, slot);
-        } else if (gegner.getAusdauer() < 10) {
-            ausruhen(gegner);
-        } else if (gegner.getHealth() < 50) {
-            blocken(gegner);
-        } else if (spieler.isBlocking()) {
-            if (gegner.getAusdauer() >= 10) {
-                blocken(gegner);
-            } else {
-                ausruhen(gegner);
-            }
-        } else {
-            angreifen(gegner, spieler);
+            gegenstandBenutzen(gegner, slot, spieler);
+            return;
         }
+
+        // 10% Chance auf Ausruhen (statt 15%) oder immer bei Ausdauer < 10
+        if (gegner.getAusdauer() < 10 || random.nextInt(100) < 10) {
+            ausruhen(gegner);
+            return;
+        }
+
+        // 20% Chance Bombe (statt 30%)
+        if (hatItem(gegner, "bombe") && gegner.getAusdauer() >= 10 && random.nextInt(100) < 20) {
+            int slot = findeItemSlot(gegner, "bombe");
+            gegenstandBenutzen(gegner, slot, spieler);
+            return;
+        }
+
+        // 10% Chance Blocken (statt 20%)
+        if (gegner.getAusdauer() >= 10 && random.nextInt(100) < 10) {
+            blocken(gegner);
+            return;
+        }
+
+        // Standardaktion: Angreifen
+        angreifen(gegner, spieler);
     }
+
+
+
 
     private static boolean hatItem(SpielCharakter charakter, String itemName) {
         for (String item : charakter.getInventar()) {

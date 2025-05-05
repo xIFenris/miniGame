@@ -50,7 +50,7 @@ public class Main {
                     }
                     System.out.print("Slot (1-" + inventar.length + "): ");
                     int slot = scanner.nextInt();
-                    Aktion.gegenstandBenutzen(spieler, slot - 1); // -1 wegen Index 0-basiert
+                    Aktion.gegenstandBenutzen(spieler, slot - 1, gegner); // Den Gegner als dritten Parameter übergeben
                     break;
 
 
