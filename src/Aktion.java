@@ -1,8 +1,12 @@
+package src;
+
+import src.player.PlayerCharacter;
+
 import java.util.Random;
 
 public class Aktion {
 
-    public static void angreifen(SpielCharakter angreifer, SpielCharakter verteidiger) {
+    public static void angreifen(PlayerCharacter angreifer, PlayerCharacter verteidiger) {
         if (angreifer.getAusdauer() >= 5) {
             int schaden = 10;
 
@@ -21,7 +25,7 @@ public class Aktion {
         }
     }
 
-    public static void blocken(SpielCharakter blockierer) {
+    public static void blocken(PlayerCharacter blockierer) {
         if (blockierer.getAusdauer() >= 10) {
             blockierer.setAusdauer(blockierer.getAusdauer() - 10);
             blockierer.setBlocking(true);
@@ -31,7 +35,7 @@ public class Aktion {
         }
     }
 
-    public static void gegenstandBenutzen(SpielCharakter benutzer, int slotIndex, SpielCharakter gegner) {
+    public static void gegenstandBenutzen(PlayerCharacter benutzer, int slotIndex, PlayerCharacter gegner) {
         String[] inventar = benutzer.getInventar();
 
         if (slotIndex < 0 || slotIndex >= inventar.length) {
@@ -69,14 +73,14 @@ public class Aktion {
         }
     }
 
-    public static void ausruhen(SpielCharakter charakter) {
+    public static void ausruhen(PlayerCharacter charakter) {
         int aktuelleAusdauer = charakter.getAusdauer();
         int neueAusdauer = Math.min(aktuelleAusdauer + 20, 100);
         charakter.setAusdauer(neueAusdauer);
         System.out.println(charakter.getName() + " ruht sich aus und regeneriert 20 Ausdauer.");
     }
 
-    public static void gegnerZug(SpielCharakter gegner, SpielCharakter spieler) {
+    public static void gegnerZug(PlayerCharacter gegner, PlayerCharacter spieler) {
         Random random = new Random();
 
         // 50% Chance auf Heilung bei HP <= 100 (statt 75%)
@@ -112,7 +116,7 @@ public class Aktion {
 
 
 
-    private static boolean hatItem(SpielCharakter charakter, String itemName) {
+    private static boolean hatItem(PlayerCharacter charakter, String itemName) {
         for (String item : charakter.getInventar()) {
             if (item.equalsIgnoreCase(itemName)) {
                 return true;
@@ -121,7 +125,7 @@ public class Aktion {
         return false;
     }
 
-    private static int findeItemSlot(SpielCharakter charakter, String itemName) {
+    private static int findeItemSlot(PlayerCharacter charakter, String itemName) {
         String[] inventar = charakter.getInventar();
         for (int i = 0; i < inventar.length; i++) {
             if (inventar[i].equalsIgnoreCase(itemName)) {

@@ -1,5 +1,7 @@
+import src.Aktion;
+import src.player.PlayerCharacter;
+
 import java.util.Scanner;
-import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,8 +12,8 @@ public class Main {
         String name = scanner.nextLine();
 
         // Charaktere erstellen
-        SpielCharakter spieler = new SpielCharakter(name);
-        SpielCharakter gegner = new SpielCharakter("Dunkler Spiegel");
+        PlayerCharacter spieler = new PlayerCharacter(name);
+        PlayerCharacter gegner = new PlayerCharacter("Dunkler Spiegel");
 
         // Startstatus anzeigen
         System.out.println("\n--- Dein Charakter ---");
@@ -25,7 +27,7 @@ public class Main {
         // Hauptspiel-Schleife
         while (spielLäuft && spieler.getHealth() > 0 && gegner.getHealth() > 0) {
             // Spieleraktion wählen
-            System.out.println("\nWähle eine Aktion:");
+            System.out.println("\nWähle eine src.Aktion:");
             System.out.println("1. Angreifen");
             System.out.println("2. Blocken");
             System.out.println("3. Gegenstand benutzen");

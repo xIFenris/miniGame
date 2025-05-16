@@ -1,6 +1,8 @@
+package src.player;
+
 import java.util.Arrays;
 
-public class SpielCharakter {
+public class PlayerCharacter {
 
     private String name;
     private int health;
@@ -9,7 +11,7 @@ public class SpielCharakter {
     private boolean isBlocking = false;
 
     // Konstruktor mit Name
-    public SpielCharakter(String name) {
+    public PlayerCharacter(String name) {
         this.name = name;
         this.health = 150;
         this.ausdauer = 100;
