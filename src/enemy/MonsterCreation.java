@@ -5,26 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MonsterFactory {
+public class MonsterCreation {
 
-    // Erwartet jetzt einen generischen Character als Spieler
-    public static List<Monster> createShuffledMonsterList(Character player) {
-
-        List<Monster> monsterList = new ArrayList<>();
-
-        // "Tutorial"-Gegner
-        monsterList.add(createDarkMirror(player));
-
-        // Folgende Gegner
-        List<Monster> otherMonsters = new ArrayList<>();
-        otherMonsters.add(createGhoul());
-        otherMonsters.add(createZombie());
-
-        Collections.shuffle(otherMonsters);
-        monsterList.addAll(otherMonsters);
-
-        return monsterList;
-    }
 
     public static Monster createGhoul() {
         // Monster-Konstruktor mit Inventar aufrufen

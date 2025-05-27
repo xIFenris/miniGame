@@ -1,5 +1,8 @@
 package player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Character {
     private String name;
     private int health;
@@ -7,7 +10,10 @@ public class Character {
     private int ausdauer;
     private int maxAusdauer;
     private boolean blocking;
+    private boolean paralyzed; // Neuer Zustand für Paralyse
     protected String[] inventar;
+
+    private List<Ability> abilities; // Liste von Fähigkeiten
 
     public Character(String name, int health, int ausdauer, String[] inventar) {
         this.name = name;
@@ -16,7 +22,9 @@ public class Character {
         this.ausdauer = ausdauer;
         this.maxAusdauer = ausdauer;
         this.blocking = false;
+        this.paralyzed = false; // Standardmäßig nicht paralysiert
         this.inventar = inventar;
+        this.abilities = new ArrayList<>(); // Initialisierung der Fähigkeitenliste
     }
 
     // Getter und Setter
@@ -31,6 +39,18 @@ public class Character {
     public void setMaxAusdauer(int maxAusdauer) { this.maxAusdauer = maxAusdauer; }
     public boolean isBlocking() { return blocking; }
     public void setBlocking(boolean blocking) { this.blocking = blocking; }
+    public boolean isParalyzed() { return paralyzed; }
+    public void setParalyzed(boolean paralyzed) { this.paralyzed = paralyzed; }
+
     public String[] getInventar() { return inventar; }
     public void setInventar(String[] inventar) { this.inventar = inventar; }
+
+    // Fähigkeiten-Logik
+    public List<Ability> getAbilities() {
+        return abilities;
+    }
+
+    public void addAbility(Ability ability) {
+        abilities.add(ability);
+    }
 }

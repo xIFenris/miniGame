@@ -2,7 +2,8 @@ package game;
 
 import enemy.Monster;
 import actions.MonsterActions;
-import enemy.MonsterFactory;
+import enemy.MonsterCreation;
+import enemy.MonsterManager;
 import player.Character;
 import actions.CharacterActions;
 
@@ -27,7 +28,7 @@ public class Game {
         player = new Character(name, 100, 100, new String[]{"trank", "bombe", "leer"});
 
         // Gegnerliste erstellen
-        monsterList = MonsterFactory.createShuffledMonsterList(player);
+        monsterList = MonsterManager.createShuffledMonsterList(player);
 
         isRunning = true;
     }
@@ -120,6 +121,7 @@ public class Game {
 
         if (monster.getHealth() <= 0) {
             System.out.println("\nDu hast " + monster.getName() + " besiegt!");
+            player.setHealth(player.getHealth());  // + monster.getReward() für später
             monsterList.remove(monster); // Besiegtes Monster aus der Liste entfernen
 
             if (monsterList.isEmpty()) {
