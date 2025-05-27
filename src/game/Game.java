@@ -4,8 +4,10 @@ import enemy.Monster;
 import actions.MonsterActions;
 import enemy.MonsterCreation;
 import enemy.MonsterManager;
+import player.Ability;
 import player.Character;
 import actions.CharacterActions;
+import player.Spellbook;
 
 import java.util.List;
 import java.util.Scanner;
@@ -26,6 +28,11 @@ public class Game {
         System.out.println("Gebe den Namen deines Charakters ein: ");
         String name = scanner.nextLine();
         player = new Character(name, 100, 100, new String[]{"trank", "bombe", "leer"});
+
+        // Fähigkeiten dem Spieler hinzufügen
+        player.addAbility(Spellbook.getAbility("Flammenschwerthieb"));
+
+
 
         // Gegnerliste erstellen
         monsterList = MonsterManager.createShuffledMonsterList(player);
@@ -67,7 +74,8 @@ public class Game {
         System.out.println("1. Angreifen");
         System.out.println("2. Blocken");
         System.out.println("3. Gegenstand benutzen");
-        System.out.println("4. Ausruhen");
+        System.out.println("4. Fähigkeit einsetzen"); // Neue Option
+        System.out.println("5. Ausruhen");
         System.out.println("0. Spiel beenden");
 
         int choice = scanner.nextInt();
@@ -75,11 +83,42 @@ public class Game {
             case 1 -> CharacterActions.attack(player, monster);
             case 2 -> CharacterActions.blocken(player);
             case 3 -> handleUseItem(scanner);
-            case 4 -> CharacterActions.ausruhen(player);
+            case 4 -> handleUseAbility(scanner, monster); // Neue Methode für Fähigkeiten
+            case 5 -> CharacterActions.ausruhen(player);
             case 0 -> isRunning = false;
             default -> System.out.println("Ungültige Eingabe.");
         }
     }
+    private void handleUseAbility(Scanner scanner, Monster target) {
+        if (player.getAbilities().isEmpty()) {
+            System.out.println("Du hast keine Fähigkeiten gelernt.");
+            return;
+        }
+
+        System.out.println("Wähle eine Fähigkeit:");
+        for (int i = 0; i < player.getAbilities().size(); i++) {
+            Ability ability = player.getAbilities().get(i);
+            System.out.println((i + 1) + ": " + ability.getName() + " - " + ability.getEffectDescription());
+        }
+
+        try {
+            int choice = scanner.nextInt() - 1;
+
+            if (choice < 0 || choice >= player.getAbilities().size()) {
+                System.out.println("Ungültige Auswahl.");
+                return;
+            }
+
+            // Führe die gewählte Fähigkeit aus
+            Ability chosenAbility = player.getAbilities().get(choice);
+            chosenAbility.applyEffect(player, target);
+
+        } catch (Exception e) {
+            System.out.println("Ungültige Eingabe!");
+            scanner.nextLine(); // Eingabepuffer leeren
+        }
+    }
+
 
     private void handleUseItem(Scanner scanner) {
         // Inventar zeigen
@@ -123,6 +162,22 @@ public class Game {
             System.out.println("\nDu hast " + monster.getName() + " besiegt!");
             player.setHealth(player.getHealth());  // + monster.getReward() für später
             monsterList.remove(monster); // Besiegtes Monster aus der Liste entfernen
+
+            // Check: Dunkler Spiegel besiegt
+            if (monster.getName().equals("Dunkler Spiegel")) {
+                System.out.println("Der Dunkle Spiegel wurde besiegt! Du lernst zwei neue Fähigkeiten:");
+                Ability wasserkugel = Spellbook.getAbility("Wasserkugel");
+                Ability paralyse = Spellbook.getAbility("Paralyse");
+
+                // Fähigkeiten hinzufügen
+                player.addAbility(wasserkugel);
+                player.addAbility(paralyse);
+
+                // Feedback an den Spieler
+                System.out.println("- Neue Fähigkeit gelernt: " + wasserkugel.getName());
+                System.out.println("- Neue Fähigkeit gelernt: " + paralyse.getName());
+            }
+
 
             if (monsterList.isEmpty()) {
                 System.out.println("\nGratulation! Du hast alle Gegner besiegt!");
