@@ -2,7 +2,6 @@ package game;
 
 import enemy.Monster;
 import actions.MonsterActions;
-import enemy.MonsterCreation;
 import enemy.MonsterManager;
 import player.Ability;
 import player.Character;
@@ -98,7 +97,7 @@ public class Game {
         System.out.println("Wähle eine Fähigkeit:");
         for (int i = 0; i < player.getAbilities().size(); i++) {
             Ability ability = player.getAbilities().get(i);
-            System.out.println((i + 1) + ": " + ability.getName() + " - " + ability.getEffectDescription());
+            System.out.println((i + 1) + ": " + ability.getAbilityname() + " - " + ability.getEffectDescription());
         }
 
         try {
@@ -160,7 +159,10 @@ public class Game {
 
         if (monster.getHealth() <= 0) {
             System.out.println("\nDu hast " + monster.getName() + " besiegt!");
-            player.setHealth(player.getHealth());  // + monster.getReward() für später
+
+            player.setHealth(Math.min(player.getHealth() + 50, player.getMaxHealth())); // + monster.getReward() für später
+            player.setAusdauer(Math.min(player.getAusdauer() + 40, player.getMaxAusdauer()));
+
             monsterList.remove(monster); // Besiegtes Monster aus der Liste entfernen
 
             // Check: Dunkler Spiegel besiegt
@@ -174,8 +176,8 @@ public class Game {
                 player.addAbility(paralyse);
 
                 // Feedback an den Spieler
-                System.out.println("- Neue Fähigkeit gelernt: " + wasserkugel.getName());
-                System.out.println("- Neue Fähigkeit gelernt: " + paralyse.getName());
+                System.out.println("- Neue Fähigkeit gelernt: " + wasserkugel.getAbilityname());
+                System.out.println("- Neue Fähigkeit gelernt: " + paralyse.getAbilityname());
             }
 
 

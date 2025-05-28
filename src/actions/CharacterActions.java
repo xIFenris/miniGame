@@ -25,7 +25,7 @@ public class CharacterActions {
     public static void ausruhen(player.Character character) {
         if (character.getAusdauer() < character.getMaxAusdauer()) {
             System.out.println(character.getName() + " ruht sich aus.");
-            character.setAusdauer(Math.min(character.getMaxAusdauer(), character.getAusdauer() + 20));
+            character.setAusdauer(Math.min(character.getMaxAusdauer(), character.getAusdauer() + 40));
         } else {
             System.out.println(character.getName() + " hat maximale Ausdauer.");
         }
