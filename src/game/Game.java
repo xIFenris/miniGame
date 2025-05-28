@@ -7,6 +7,7 @@ import character.Ability;
 import character.Character;
 import actions.CharacterActions;
 import character.Spellbook;
+import inventory.PlayerInventory;
 
 import java.util.List;
 import java.util.Scanner;
@@ -26,7 +27,8 @@ public class Game {
         // Spieler erstellen
         System.out.println("Gebe den Namen deines Charakters ein: ");
         String name = scanner.nextLine();
-        player = new Character(name, 100, 100, new String[]{"trank", "bombe", "leer"});
+        player = new Character(name, 100, 100, new PlayerInventory(new String[]{"trank", "bombe", "leer"}));
+
 
         // Fähigkeiten dem Spieler hinzufügen
         player.addAbility(Spellbook.getAbility("Flammenschwerthieb"));
@@ -120,26 +122,34 @@ public class Game {
 
 
     private void handleUseItem(Scanner scanner) {
-        // Inventar zeigen
+        // Inventar anzeigen
         System.out.println("Wähle einen Slot im Inventar:");
-        String[] inventory = player.getInventar();
-        for (int i = 0; i < inventory.length; i++) {
-            System.out.println((i + 1) + ": " + (inventory[i] == null ? "Leer" : inventory[i]));
+        String[] items = player.getInventory().getItems(); // Zugriff auf das Inventar-Array
+        for (int i = 0; i < items.length; i++) {
+            System.out.println((i + 1) + ": " + (items[i] == null ? "Leer" : items[i]));
         }
 
-        // Eingabe abfragen
+        // Eingabe vom Spieler abfragen
         try {
-            System.out.print("Slot wählen (1-" + inventory.length + "): ");
+            System.out.print("Slot wählen (1-" + items.length + "): ");
             int slot = scanner.nextInt();
-            if (slot < 1 || slot > inventory.length) {
+
+            // Slot-Bereich validieren
+            if (slot < 1 || slot > items.length) {
                 System.out.println("Ungültiger Slot.");
                 return;
             }
 
-            // Angabe: Slot wird von 1-basiert in 0-basiert umgerechnet
+            // Slot 1-basiert in 0-basierten Index umwandeln
             int slotIndex = slot - 1;
 
-            // Gegner für die Nutzung des Gegenstands auswählen (wenn relevant)
+            // Prüfen, ob ein Item im gewählten Slot vorhanden ist
+            if (items[slotIndex] == null) {
+                System.out.println("Kein Gegenstand im gewählten Slot.");
+                return;
+            }
+
+            // Überprüfung, ob ein Monster als Ziel existiert
             Monster target = monsterList.isEmpty() ? null : monsterList.get(0);
 
             // Gegenstand verwenden
@@ -147,7 +157,7 @@ public class Game {
 
         } catch (Exception e) {
             System.out.println("Ungültige Eingabe!");
-            scanner.nextLine(); // Eingabepuffer leeren
+            scanner.nextLine(); // Eingabepuffer leeren, um weitere Eingaben zu ermöglichen
         }
     }
 

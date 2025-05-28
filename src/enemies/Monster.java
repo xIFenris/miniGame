@@ -1,22 +1,25 @@
 package enemies;
 
-import character.Character; // Importiere die neue Basisklasse Character
-import java.util.Random;
+import character.Character; // Erbt von Character und nutzt die neue Basisklasse
+import inventory.MonsterInventory; // Neues Inventar für Monster
 
-// Monster erbt von Character und ist somit auch Attackable
 public class Monster extends Character {
-    private Random random = new Random();
+    private MonsterInventory inventory; // Neues Monster-Inventory
 
-    // Konstruktor für Monster
-    // Ruft den Konstruktor der Basisklasse Character auf
-    public Monster(String name, int health, int ausdauer, String[] inventar) { // Inventar-Parameter hinzugefügt
-        // Ruft den Character-Konstruktor auf: name, initialHealth, initialAusdauer, initialInventar
-        super(name, health, ausdauer, inventar);
-        // Monster-spezifische Initialisierungen, falls vorhanden
+    // Konstruktor mit Inventar
+    public Monster(String name, int health, int ausdauer, String[] initialItems) {
+        super(name, health, ausdauer, initialItems); // Ruft den Character-Konstruktor auf
+        this.inventory = new MonsterInventory(initialItems); // Initialisiert das Monsterinventar
     }
 
-    // Wenn du einen Konstruktor ohne Inventar haben willst:
+    // Konstruktor ohne vollständiges Inventar (Standard-Leer-Inventar)
     public Monster(String name, int health, int ausdauer) {
-        super(name, health, ausdauer, new String[]{"Leer"}); // Standard-Inventar für Monster
+        super(name, health, ausdauer, new String[]{"Leer"});
+        this.inventory = new MonsterInventory(new String[]{"Leer"}); // Standard-Inventar
+    }
+
+    // Zugriff auf das Inventar
+    public MonsterInventory getInventory() {
+        return inventory;
     }
 }
