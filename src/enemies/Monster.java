@@ -1,6 +1,6 @@
-package enemy;
+package enemies;
 
-import player.Character; // Importiere die neue Basisklasse Character
+import character.Character; // Importiere die neue Basisklasse Character
 import java.util.Random;
 
 // Monster erbt von Character und ist somit auch Attackable

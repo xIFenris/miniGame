@@ -1,12 +1,12 @@
 package game;
 
-import enemy.Monster;
+import enemies.Monster;
 import actions.MonsterActions;
-import enemy.MonsterManager;
-import player.Ability;
-import player.Character;
+import enemies.MonsterManager;
+import character.Ability;
+import character.Character;
 import actions.CharacterActions;
-import player.Spellbook;
+import character.Spellbook;
 
 import java.util.List;
 import java.util.Scanner;

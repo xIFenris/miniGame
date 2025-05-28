@@ -1,9 +1,9 @@
 package actions;
 
-import player.Character;
+import character.Character;
 
 public class CharacterActions {
-    public static void attack(player.Character attacker, player.Character target) {
+    public static void attack(character.Character attacker, character.Character target) {
         if (attacker.getAusdauer() >= 5) {
             int damage = 10;
 
@@ -22,7 +22,7 @@ public class CharacterActions {
         }
     }
 
-    public static void ausruhen(player.Character character) {
+    public static void ausruhen(character.Character character) {
         if (character.getAusdauer() < character.getMaxAusdauer()) {
             System.out.println(character.getName() + " ruht sich aus.");
             character.setAusdauer(Math.min(character.getMaxAusdauer(), character.getAusdauer() + 40));
@@ -31,7 +31,7 @@ public class CharacterActions {
         }
     }
 
-    public static void blocken(player.Character character) {
+    public static void blocken(character.Character character) {
         if (character.getAusdauer() >= 10) {
             character.setAusdauer(character.getAusdauer() - 10);
             character.setBlocking(true);
@@ -41,7 +41,7 @@ public class CharacterActions {
         }
     }
 
-    public static void showCharacter(player.Character character) {
+    public static void showCharacter(character.Character character) {
         System.out.println("=== Charakter Details ===");
         System.out.println("Name: " + character.getName());
         System.out.println("Gesundheit: " + character.getHealth() + "/" + character.getMaxHealth());
@@ -52,7 +52,7 @@ public class CharacterActions {
         }
     }
 
-    public static boolean hasItem(player.Character character, String item) {
+    public static boolean hasItem(character.Character character, String item) {
         for (String s : character.getInventar()) {
             if (s != null && s.equalsIgnoreCase(item)) {
                 return true;
@@ -62,7 +62,7 @@ public class CharacterActions {
     }
 
     // Den Slot des Items finden (oder -1, wenn nicht vorhanden)
-    public static int findItemSlot(player.Character character, String item) {
+    public static int findItemSlot(character.Character character, String item) {
         for (int i = 0; i < character.getInventar().length; i++) {
             if (character.getInventar()[i] != null && character.getInventar()[i].equalsIgnoreCase(item)) {
                 return i;
@@ -72,7 +72,7 @@ public class CharacterActions {
     }
 
     // Gegenstand im Inventar verwenden
-    public static void useItem(player.Character character, int slot, Character target) {
+    public static void useItem(character.Character character, int slot, Character target) {
         if (slot < 0 || slot >= character.getInventar().length || character.getInventar()[slot] == null) {
             System.out.println("Kein gültiger Gegenstand im gewählten Slot.");
             return;

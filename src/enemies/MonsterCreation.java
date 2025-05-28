@@ -1,9 +1,7 @@
-package enemy;
+package enemies;
 
-import player.Character; // Importiere die neue Basisklasse Character
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import character.Character; // Importiere die neue Basisklasse Character
+
 
 public class MonsterCreation {
 

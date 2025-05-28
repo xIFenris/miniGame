@@ -1,4 +1,4 @@
-package player;
+package character;
 
 public class Ability {
     private String abilityname;                // Name der Fähigkeit

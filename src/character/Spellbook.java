@@ -1,4 +1,4 @@
-package player;
+package character;
 
 import java.util.HashMap;
 import java.util.Map;
