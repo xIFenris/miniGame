@@ -8,13 +8,14 @@ public class Monster extends Character {
 
     // Konstruktor mit Inventar
     public Monster(String name, int health, int ausdauer, String[] initialItems) {
-        super(name, health, ausdauer, initialItems); // Ruft den Character-Konstruktor auf
+        super(name, health, ausdauer, new MonsterInventory(initialItems));// Ruft den Character-Konstruktor auf
         this.inventory = new MonsterInventory(initialItems); // Initialisiert das Monsterinventar
     }
 
     // Konstruktor ohne vollständiges Inventar (Standard-Leer-Inventar)
     public Monster(String name, int health, int ausdauer) {
-        super(name, health, ausdauer, new String[]{"Leer"});
+        super(name, health, ausdauer, new MonsterInventory(new String[]{"Leer"}));
+
         this.inventory = new MonsterInventory(new String[]{"Leer"}); // Standard-Inventar
     }
 
