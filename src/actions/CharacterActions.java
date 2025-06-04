@@ -1,9 +1,9 @@
 package actions;
 
-import player.Character;
+import character.Character;
 
 public class CharacterActions {
-    public static void attack(player.Character attacker, player.Character target) {
+    public static void attack(Character attacker, Character target) {
         if (attacker.getAusdauer() >= 5) {
             int damage = 10;
 
@@ -22,16 +22,16 @@ public class CharacterActions {
         }
     }
 
-    public static void ausruhen(player.Character character) {
+    public static void ausruhen(Character character) {
         if (character.getAusdauer() < character.getMaxAusdauer()) {
             System.out.println(character.getName() + " ruht sich aus.");
-            character.setAusdauer(Math.min(character.getMaxAusdauer(), character.getAusdauer() + 20));
+            character.setAusdauer(Math.min(character.getMaxAusdauer(), character.getAusdauer() + 40));
         } else {
             System.out.println(character.getName() + " hat maximale Ausdauer.");
         }
     }
 
-    public static void blocken(player.Character character) {
+    public static void blocken(Character character) {
         if (character.getAusdauer() >= 10) {
             character.setAusdauer(character.getAusdauer() - 10);
             character.setBlocking(true);
@@ -41,19 +41,21 @@ public class CharacterActions {
         }
     }
 
-    public static void showCharacter(player.Character character) {
+    public static void showCharacter(Character character) {
         System.out.println("=== Charakter Details ===");
         System.out.println("Name: " + character.getName());
         System.out.println("Gesundheit: " + character.getHealth() + "/" + character.getMaxHealth());
         System.out.println("Ausdauer: " + character.getAusdauer() + "/" + character.getMaxAusdauer());
         System.out.println("Inventar:");
-        for (int i = 0; i < character.getInventar().length; i++) {
-            System.out.println((i + 1) + ": " + (character.getInventar()[i] == null ? "Leer" : character.getInventar()[i]));
+        String[] inventory = character.getInventory().getItems(); // Zugriff auf Items
+        for (int i = 0; i < inventory.length; i++) {
+            System.out.println((i + 1) + ": " + (inventory[i] == null ? "Leer" : inventory[i]));
         }
     }
 
-    public static boolean hasItem(player.Character character, String item) {
-        for (String s : character.getInventar()) {
+    public static boolean hasItem(Character character, String item) {
+        String[] inventory = character.getInventory().getItems(); // Zugriff auf Items
+        for (String s : inventory) {
             if (s != null && s.equalsIgnoreCase(item)) {
                 return true;
             }
@@ -62,9 +64,10 @@ public class CharacterActions {
     }
 
     // Den Slot des Items finden (oder -1, wenn nicht vorhanden)
-    public static int findItemSlot(player.Character character, String item) {
-        for (int i = 0; i < character.getInventar().length; i++) {
-            if (character.getInventar()[i] != null && character.getInventar()[i].equalsIgnoreCase(item)) {
+    public static int findItemSlot(Character character, String item) {
+        String[] inventory = character.getInventory().getItems(); // Zugriff auf Items
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null && inventory[i].equalsIgnoreCase(item)) {
                 return i;
             }
         }
@@ -72,17 +75,18 @@ public class CharacterActions {
     }
 
     // Gegenstand im Inventar verwenden
-    public static void useItem(player.Character character, int slot, Character target) {
-        if (slot < 0 || slot >= character.getInventar().length || character.getInventar()[slot] == null) {
+    public static void useItem(Character character, int slot, Character target) {
+        String[] inventory = character.getInventory().getItems(); // Zugriff auf Items
+        if (slot < 0 || slot >= inventory.length || inventory[slot] == null) {
             System.out.println("Kein gültiger Gegenstand im gewählten Slot.");
             return;
         }
 
-        String item = character.getInventar()[slot];
+        String item = inventory[slot];
         System.out.println(character.getName() + " benutzt " + item + ".");
 
         // Gegenstand entfernen
-        character.getInventar()[slot] = null;
+        inventory[slot] = null;
 
         // Gegenstandslogik: Trank fügt Gesundheit hinzu
         if (item.equalsIgnoreCase("trank")) {
@@ -96,6 +100,4 @@ public class CharacterActions {
             System.out.println(character.getName() + " wirft eine Bombe und verursacht 15 Schaden bei " + target.getName() + ".");
         }
     }
-
-
 }

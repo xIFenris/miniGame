@@ -1,5 +1,6 @@
-package player;
+package character;
 
+import inventory.Inventory; // Allgemeine Inventar-Klasse
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +12,11 @@ public class Character {
     private int maxAusdauer;
     private boolean blocking;
     private boolean paralyzed; // Neuer Zustand für Paralyse
-    protected String[] inventar;
+    private Inventory inventory; // Nutzen der allgemeinen Inventar-Klasse
 
     private List<Ability> abilities; // Liste von Fähigkeiten
 
-    public Character(String name, int health, int ausdauer, String[] inventar) {
+    public Character(String name, int health, int ausdauer, Inventory inventory) {
         this.name = name;
         this.health = health;
         this.maxHealth = health;
@@ -23,7 +24,7 @@ public class Character {
         this.maxAusdauer = ausdauer;
         this.blocking = false;
         this.paralyzed = false; // Standardmäßig nicht paralysiert
-        this.inventar = inventar;
+        this.inventory = inventory; // Weist das übergebene Inventar zu
         this.abilities = new ArrayList<>(); // Initialisierung der Fähigkeitenliste
     }
 
@@ -42,8 +43,10 @@ public class Character {
     public boolean isParalyzed() { return paralyzed; }
     public void setParalyzed(boolean paralyzed) { this.paralyzed = paralyzed; }
 
-    public String[] getInventar() { return inventar; }
-    public void setInventar(String[] inventar) { this.inventar = inventar; }
+    // Zugriff auf das Inventory-Objekt
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     // Fähigkeiten-Logik
     public List<Ability> getAbilities() {

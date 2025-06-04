@@ -1,6 +1,6 @@
-package enemy;
+package enemies;
 
-import player.Character;
+import character.Character;
 
 import java.util.ArrayList;
 import java.util.Collections;

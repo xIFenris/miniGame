@@ -1,7 +1,7 @@
 package actions;
 
-import enemy.Monster;
-import player.Character;
+import enemies.Monster;
+import character.Character;
 
 import java.util.Random;
 

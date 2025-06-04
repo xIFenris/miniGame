@@ -1,11 +1,13 @@
 package game;
 
-import enemy.Monster;
+import enemies.Monster;
 import actions.MonsterActions;
-import enemy.MonsterCreation;
-import enemy.MonsterManager;
-import player.Character;
+import enemies.MonsterManager;
+import character.Ability;
+import character.Character;
 import actions.CharacterActions;
+import character.Spellbook;
+import inventory.PlayerInventory;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,7 +27,13 @@ public class Game {
         // Spieler erstellen
         System.out.println("Gebe den Namen deines Charakters ein: ");
         String name = scanner.nextLine();
-        player = new Character(name, 100, 100, new String[]{"trank", "bombe", "leer"});
+        player = new Character(name, 100, 100, new PlayerInventory(new String[]{"trank", "bombe", "leer"}));
+
+
+        // Fähigkeiten dem Spieler hinzufügen
+        player.addAbility(Spellbook.getAbility("Flammenschwerthieb"));
+
+
 
         // Gegnerliste erstellen
         monsterList = MonsterManager.createShuffledMonsterList(player);
@@ -67,7 +75,8 @@ public class Game {
         System.out.println("1. Angreifen");
         System.out.println("2. Blocken");
         System.out.println("3. Gegenstand benutzen");
-        System.out.println("4. Ausruhen");
+        System.out.println("4. Fähigkeit einsetzen"); // Neue Option
+        System.out.println("5. Ausruhen");
         System.out.println("0. Spiel beenden");
 
         int choice = scanner.nextInt();
@@ -75,33 +84,72 @@ public class Game {
             case 1 -> CharacterActions.attack(player, monster);
             case 2 -> CharacterActions.blocken(player);
             case 3 -> handleUseItem(scanner);
-            case 4 -> CharacterActions.ausruhen(player);
+            case 4 -> handleUseAbility(scanner, monster); // Neue Methode für Fähigkeiten
+            case 5 -> CharacterActions.ausruhen(player);
             case 0 -> isRunning = false;
             default -> System.out.println("Ungültige Eingabe.");
         }
     }
-
-    private void handleUseItem(Scanner scanner) {
-        // Inventar zeigen
-        System.out.println("Wähle einen Slot im Inventar:");
-        String[] inventory = player.getInventar();
-        for (int i = 0; i < inventory.length; i++) {
-            System.out.println((i + 1) + ": " + (inventory[i] == null ? "Leer" : inventory[i]));
+    private void handleUseAbility(Scanner scanner, Monster target) {
+        if (player.getAbilities().isEmpty()) {
+            System.out.println("Du hast keine Fähigkeiten gelernt.");
+            return;
         }
 
-        // Eingabe abfragen
+        System.out.println("Wähle eine Fähigkeit:");
+        for (int i = 0; i < player.getAbilities().size(); i++) {
+            Ability ability = player.getAbilities().get(i);
+            System.out.println((i + 1) + ": " + ability.getAbilityname() + " - " + ability.getEffectDescription());
+        }
+
         try {
-            System.out.print("Slot wählen (1-" + inventory.length + "): ");
+            int choice = scanner.nextInt() - 1;
+
+            if (choice < 0 || choice >= player.getAbilities().size()) {
+                System.out.println("Ungültige Auswahl.");
+                return;
+            }
+
+            // Führe die gewählte Fähigkeit aus
+            Ability chosenAbility = player.getAbilities().get(choice);
+            chosenAbility.applyEffect(player, target);
+
+        } catch (Exception e) {
+            System.out.println("Ungültige Eingabe!");
+            scanner.nextLine(); // Eingabepuffer leeren
+        }
+    }
+
+
+    private void handleUseItem(Scanner scanner) {
+        // Inventar anzeigen
+        System.out.println("Wähle einen Slot im Inventar:");
+        String[] items = player.getInventory().getItems(); // Zugriff auf das Inventar-Array
+        for (int i = 0; i < items.length; i++) {
+            System.out.println((i + 1) + ": " + (items[i] == null ? "Leer" : items[i]));
+        }
+
+        // Eingabe vom Spieler abfragen
+        try {
+            System.out.print("Slot wählen (1-" + items.length + "): ");
             int slot = scanner.nextInt();
-            if (slot < 1 || slot > inventory.length) {
+
+            // Slot-Bereich validieren
+            if (slot < 1 || slot > items.length) {
                 System.out.println("Ungültiger Slot.");
                 return;
             }
 
-            // Angabe: Slot wird von 1-basiert in 0-basiert umgerechnet
+            // Slot 1-basiert in 0-basierten Index umwandeln
             int slotIndex = slot - 1;
 
-            // Gegner für die Nutzung des Gegenstands auswählen (wenn relevant)
+            // Prüfen, ob ein Item im gewählten Slot vorhanden ist
+            if (items[slotIndex] == null) {
+                System.out.println("Kein Gegenstand im gewählten Slot.");
+                return;
+            }
+
+            // Überprüfung, ob ein Monster als Ziel existiert
             Monster target = monsterList.isEmpty() ? null : monsterList.get(0);
 
             // Gegenstand verwenden
@@ -109,7 +157,7 @@ public class Game {
 
         } catch (Exception e) {
             System.out.println("Ungültige Eingabe!");
-            scanner.nextLine(); // Eingabepuffer leeren
+            scanner.nextLine(); // Eingabepuffer leeren, um weitere Eingaben zu ermöglichen
         }
     }
 
@@ -121,8 +169,27 @@ public class Game {
 
         if (monster.getHealth() <= 0) {
             System.out.println("\nDu hast " + monster.getName() + " besiegt!");
-            player.setHealth(player.getHealth());  // + monster.getReward() für später
+
+            player.setHealth(Math.min(player.getHealth() + 50, player.getMaxHealth())); // + monster.getReward() für später
+            player.setAusdauer(Math.min(player.getAusdauer() + 40, player.getMaxAusdauer()));
+
             monsterList.remove(monster); // Besiegtes Monster aus der Liste entfernen
+
+            // Check: Dunkler Spiegel besiegt
+            if (monster.getName().equals("Dunkler Spiegel")) {
+                System.out.println("Der Dunkle Spiegel wurde besiegt! Du lernst zwei neue Fähigkeiten:");
+                Ability wasserkugel = Spellbook.getAbility("Wasserkugel");
+                Ability paralyse = Spellbook.getAbility("Paralyse");
+
+                // Fähigkeiten hinzufügen
+                player.addAbility(wasserkugel);
+                player.addAbility(paralyse);
+
+                // Feedback an den Spieler
+                System.out.println("- Neue Fähigkeit gelernt: " + wasserkugel.getAbilityname());
+                System.out.println("- Neue Fähigkeit gelernt: " + paralyse.getAbilityname());
+            }
+
 
             if (monsterList.isEmpty()) {
                 System.out.println("\nGratulation! Du hast alle Gegner besiegt!");
